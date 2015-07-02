@@ -1,0 +1,4 @@
+.main-board{
+  @include span(8 of 12);
+  //@include push(3.5);
+}

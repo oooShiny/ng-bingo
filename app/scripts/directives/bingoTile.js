@@ -7,7 +7,9 @@ module.exports = function() {
     },
     templateUrl: '/scripts/directives/bingoTile.html',
     link: function(scope, el, attrs) {
-      scope.selectTile = function() {
+      scope.selectTile = function(e) {
+        //console.log(attrs.index);
+        scope.$parent.handleClick(attrs.index);
         el.toggleClass('tile--selected');
       };
     }

@@ -1,1 +1,1 @@
-<div class="tile" ng-click="selectTile()">{{tile.word}}</div>
+<div ng-click="selectTile(); $event.stopPropagation();"> {{tile.word}} </div>

@@ -1,0 +1,16 @@
+.tile{
+  background: #ccc;
+  color:red;
+  display: table;
+  float:left;
+  height:100px;
+  text-align: center;
+  width:20%;
+  div{
+    display: table-cell;
+    vertical-align: middle;
+  }
+  &--selected{
+    background: #000;
+  }
+}

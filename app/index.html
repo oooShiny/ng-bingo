@@ -8,10 +8,10 @@
     <section class="inner-wrapper">
       <h1>Front End Supremacy</h1>
 
-      <div class="main" ng-controller="MainController" >
+      <div class="main-board" ng-controller="MainController" >
 
         <div ng-repeat="tile in tiles">
-          <bingo-tile tile="tile"></bingo-tile>
+          <bingo-tile class="tile" data-index="{{$index}}" tile="tile"></bingo-tile>
         </div>
       </div>
     </section>
