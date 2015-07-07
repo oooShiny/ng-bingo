@@ -9,7 +9,7 @@ module.exports = function() {
     link: function(scope, el, attrs) {
       scope.selectTile = function(e) {
         //console.log(attrs.index);
-        scope.$parent.handleClick(attrs.index);
+        scope.$parent.handleClick(parseInt(attrs.index));
         el.toggleClass('tile--selected');
       };
     }
