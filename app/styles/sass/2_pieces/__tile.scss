@@ -1,16 +1,33 @@
-.tile{
-  background: #ccc;
-  color:red;
+.tile {
+  background-color: crimson;
+  border-bottom:2px solid #222;
+  border-right:1px solid #222;
+  border-left:1px solid #fff;
+  border-top:1px solid #fff;
+  border-radius:6px;
+  @include box-shadow(inset 0px 0px 24px rgba(0,0,0,0.4));
   display: table;
-  float:left;
-  height:100px;
+  float: left;
+  height: 100px;
+  margin: 0 1% 1% 0;
   text-align: center;
-  width:20%;
-  div{
+  @include trans(background-color box-shadow);
+  width: 19%;
+  transform: perspective(50em) rotateY(50deg);
+  div {
+    color:#fff;
     display: table-cell;
+    font-family: $sansBold;
+    @include font-size(14,20);
+    padding: 18px;
+    text-align: center;
+    text-transform: uppercase;
     vertical-align: middle;
   }
-  &--selected{
-    background: #000;
+  &--selected {
+    background-color: darken(crimson, 15%);
+  @include box-shadow( 0px 0px 24px rgba(0,0,0,0.4));
+  transform: perspective(20em) rotateY(20deg);
   }
+
 }

@@ -32,12 +32,12 @@ $susy: (
   global-box-sizing: border-box,
   gutters: .25,
   gutter-position: after,
-  debug: (
-    image: show,
-    color: rgba(#66f, .25),
-    output: background,
-    toggle: top right,
-  )
+  //debug: (
+  //  image: show,
+  //  color: rgba(#66f, .25),
+  //  output: background,
+    //toggle: top right,
+  //)
 );
 
 // If you use compass, you need this,
