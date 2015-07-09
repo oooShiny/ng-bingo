@@ -3,31 +3,11 @@ var $ = require('jquery');
 var _ = require('underscore');
 // var io = require('socket.io')();
 var socket = io.connect();
-
-
-var util = {
-  fedWords: require('../wordlist.js'),
-  generateArray: function() {
-    let arr = [];
-    for (var i = 0; i < 25; i++) {
-      let rand = Math.floor((Math.random() * util.fedWords.length));
-      arr.push({
-        word: util.fedWords[rand]
-      });
-    }
-    arr[12] = {
-      word: 'free'
-    };
-    return arr;
-  },
-  sortNumber: function(a, b) {
-    return a - b;
-  },
-  winningCombos: require('../winning-combos')
-};
+var util = require('../utils/');
 
 module.exports = ['$scope', function($scope) {
   $scope.currentCombo = [];
+  $scope.players = [];
   $scope.tiles = util.generateArray();
   $scope.checkForWin = function() {
     $.each(util.winningCombos, function(i, v) {
@@ -37,9 +17,7 @@ module.exports = ['$scope', function($scope) {
       }
     });
   };
-  $scope.emitter = function() {
 
-  };
   $scope.handleClick = function(idx) {
     if (_.indexOf($scope.currentCombo, idx) === -1) {
       $scope.currentCombo.push(idx);
@@ -48,12 +26,24 @@ module.exports = ['$scope', function($scope) {
       $scope.currentCombo = _.without($scope.currentCombo, idx);
     }
     $scope.checkForWin();
-    socket.emit('chat message', 'hello');
-
 
   };
-  socket.on('chat message', function(msg) {
-    $('body').prepend($('<li>').text(msg));
+  socket.on('playersUpdated', function(data) {
+    $scope.players = data;
+  });
+
+  $('.sign-in').submit(function() {
+    var data = {
+      currentCombo: [],
+      id: util.generateGuid(),
+      playerName: $('.username').val() || 'anon'
+    };
+    socket.emit('playerJoined', data);
+
+    $scope.myId = data.id;
+
+    $('.main-board h1').text(data.playerName);
+    return false;
   });
 
 }];

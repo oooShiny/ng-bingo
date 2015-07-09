@@ -3,42 +3,37 @@
 
 var $ = require('jquery');
 var angular = require('angular');
+var util = require('./utils/');
 
 var app = angular.module('Bingo', []);
 
 app.controller('MainController', require('./controllers/mainController.js'));
 app.directive('bingoTile', require('./directives/bingoTile.js'));
 
-},{"./controllers/mainController.js":"/Users/jake.rainis/Development/ng-bingo/app/scripts/controllers/mainController.js","./directives/bingoTile.js":"/Users/jake.rainis/Development/ng-bingo/app/scripts/directives/bingoTile.js","angular":"/Users/jake.rainis/Development/ng-bingo/app/scripts/libs/angular.min.js","jquery":"/Users/jake.rainis/Development/ng-bingo/node_modules/jquery/dist/jquery.js"}],"/Users/jake.rainis/Development/ng-bingo/app/scripts/controllers/mainController.js":[function(require,module,exports){
+var socket = io.connect();
+
+$('.sign-in').submit(function () {
+  var data = {
+    currentCombo: [],
+    id: util.generateGuid(),
+    playerName: $('.username').val() || 'anon'
+  };
+  socket.emit('playerJoined', data);
+  $('.main-board h1').text(data.playerName);
+  return false;
+});
+
+},{"./controllers/mainController.js":"/Users/jake.rainis/Development/ng-bingo/app/scripts/controllers/mainController.js","./directives/bingoTile.js":"/Users/jake.rainis/Development/ng-bingo/app/scripts/directives/bingoTile.js","./utils/":"/Users/jake.rainis/Development/ng-bingo/app/scripts/utils/index.js","angular":"/Users/jake.rainis/Development/ng-bingo/app/scripts/libs/angular.min.js","jquery":"/Users/jake.rainis/Development/ng-bingo/node_modules/jquery/dist/jquery.js"}],"/Users/jake.rainis/Development/ng-bingo/app/scripts/controllers/mainController.js":[function(require,module,exports){
 'use strict';
 var $ = require('jquery');
 var _ = require('underscore');
 // var io = require('socket.io')();
 var socket = io.connect();
-
-var util = {
-  fedWords: require('../wordlist.js'),
-  generateArray: function generateArray() {
-    var arr = [];
-    for (var i = 0; i < 25; i++) {
-      var rand = Math.floor(Math.random() * util.fedWords.length);
-      arr.push({
-        word: util.fedWords[rand]
-      });
-    }
-    arr[12] = {
-      word: 'free'
-    };
-    return arr;
-  },
-  sortNumber: function sortNumber(a, b) {
-    return a - b;
-  },
-  winningCombos: require('../winning-combos')
-};
+var util = require('../utils/');
 
 module.exports = ['$scope', function ($scope) {
   $scope.currentCombo = [];
+  $scope.players = [];
   $scope.tiles = util.generateArray();
   $scope.checkForWin = function () {
     $.each(util.winningCombos, function (i, v) {
@@ -48,7 +43,7 @@ module.exports = ['$scope', function ($scope) {
       }
     });
   };
-  $scope.emitter = function () {};
+
   $scope.handleClick = function (idx) {
     if (_.indexOf($scope.currentCombo, idx) === -1) {
       $scope.currentCombo.push(idx);
@@ -57,14 +52,27 @@ module.exports = ['$scope', function ($scope) {
       $scope.currentCombo = _.without($scope.currentCombo, idx);
     }
     $scope.checkForWin();
-    socket.emit('chat message', 'hello');
   };
-  socket.on('chat message', function (msg) {
-    $('body').prepend($('<li>').text(msg));
+  socket.on('playersUpdated', function (data) {
+    $scope.players = data;
+  });
+
+  $('.sign-in').submit(function () {
+    var data = {
+      currentCombo: [],
+      id: util.generateGuid(),
+      playerName: $('.username').val() || 'anon'
+    };
+    socket.emit('playerJoined', data);
+
+    $scope.myId = data.id;
+
+    $('.main-board h1').text(data.playerName);
+    return false;
   });
 }];
 
-},{"../winning-combos":"/Users/jake.rainis/Development/ng-bingo/app/scripts/winning-combos.js","../wordlist.js":"/Users/jake.rainis/Development/ng-bingo/app/scripts/wordlist.js","jquery":"/Users/jake.rainis/Development/ng-bingo/node_modules/jquery/dist/jquery.js","underscore":"/Users/jake.rainis/Development/ng-bingo/node_modules/underscore/underscore.js"}],"/Users/jake.rainis/Development/ng-bingo/app/scripts/directives/bingoTile.js":[function(require,module,exports){
+},{"../utils/":"/Users/jake.rainis/Development/ng-bingo/app/scripts/utils/index.js","jquery":"/Users/jake.rainis/Development/ng-bingo/node_modules/jquery/dist/jquery.js","underscore":"/Users/jake.rainis/Development/ng-bingo/node_modules/underscore/underscore.js"}],"/Users/jake.rainis/Development/ng-bingo/app/scripts/directives/bingoTile.js":[function(require,module,exports){
 'use strict';
 
 var $ = require('jquery');
@@ -79,7 +87,6 @@ module.exports = function () {
       scope.selectTile = function (e) {
         //console.log(attrs.index);
         scope.$parent.handleClick(parseInt(attrs.index));
-        scope.$parent.emitter();
         el.toggleClass('tile--selected');
       };
     }
@@ -97,12 +104,43 @@ module.exports = function () {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],"/Users/jake.rainis/Development/ng-bingo/app/scripts/winning-combos.js":[function(require,module,exports){
+},{}],"/Users/jake.rainis/Development/ng-bingo/app/scripts/utils/index.js":[function(require,module,exports){
+'use strict';
+var util = {
+  fedWords: require('./wordlist.js'),
+  generateArray: function generateArray() {
+    var arr = [];
+    for (var i = 0; i < 25; i++) {
+      var rand = Math.floor(Math.random() * util.fedWords.length);
+      arr.push({
+        word: util.fedWords[rand]
+      });
+    }
+    arr[12] = {
+      word: 'free'
+    };
+    return arr;
+  },
+  generateGuid: function generateGuid() {
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+  },
+  sortNumber: function sortNumber(a, b) {
+    return a - b;
+  },
+  winningCombos: require('./winning-combos.js')
+};
+
+module.exports = util;
+
+},{"./winning-combos.js":"/Users/jake.rainis/Development/ng-bingo/app/scripts/utils/winning-combos.js","./wordlist.js":"/Users/jake.rainis/Development/ng-bingo/app/scripts/utils/wordlist.js"}],"/Users/jake.rainis/Development/ng-bingo/app/scripts/utils/winning-combos.js":[function(require,module,exports){
 "use strict";
 
 module.exports = [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9], [10, 11, 12, 13, 14], [15, 16, 17, 18, 19], [20, 21, 22, 23, 24], [0, 5, 10, 15, 20], [1, 6, 11, 16, 21], [2, 7, 12, 17, 22], [3, 8, 13, 18, 23], [4, 9, 14, 19, 24], [0, 6, 12, 18, 24], [4, 8, 12, 16, 20]];
 
-},{}],"/Users/jake.rainis/Development/ng-bingo/app/scripts/wordlist.js":[function(require,module,exports){
+},{}],"/Users/jake.rainis/Development/ng-bingo/app/scripts/utils/wordlist.js":[function(require,module,exports){
 'use strict';
 
 module.exports = ['apple', 'atom', 'brad frost', 'cats', 'cutting edge', 'component', 'convention', 'device', 'harry roberts', 'itcss', 'javascript', 'layout', 'load time', 'molecule', 'optimization', 'organism', 'paradigm', 'paul irish', 'pages', 'pieces', 'process', 'retina', 'sass', 'screen-size', 'user'];
