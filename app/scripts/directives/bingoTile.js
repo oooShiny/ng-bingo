@@ -10,6 +10,7 @@ module.exports = function() {
       scope.selectTile = function(e) {
         //console.log(attrs.index);
         scope.$parent.handleClick(parseInt(attrs.index));
+        scope.$parent.emitter();
         el.toggleClass('tile--selected');
       };
     }

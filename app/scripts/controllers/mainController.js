@@ -1,6 +1,9 @@
 'use strict';
 var $ = require('jquery');
 var _ = require('underscore');
+// var io = require('socket.io')();
+var socket = io.connect();
+
 
 var util = {
   fedWords: require('../wordlist.js'),
@@ -26,15 +29,6 @@ var util = {
 module.exports = ['$scope', function($scope) {
   $scope.currentCombo = [];
   $scope.tiles = util.generateArray();
-  $scope.handleClick = function(idx) {
-    if (_.indexOf($scope.currentCombo, idx) === -1) {
-      $scope.currentCombo.push(idx);
-      $scope.currentCombo = $scope.currentCombo.sort(util.sortNumber);
-    } else {
-      $scope.currentCombo = _.without($scope.currentCombo, idx);
-    }
-    $scope.checkForWin();
-  };
   $scope.checkForWin = function() {
     $.each(util.winningCombos, function(i, v) {
       var intersect = _.intersection(v, $scope.currentCombo);
@@ -43,5 +37,23 @@ module.exports = ['$scope', function($scope) {
       }
     });
   };
+  $scope.emitter = function() {
+
+  };
+  $scope.handleClick = function(idx) {
+    if (_.indexOf($scope.currentCombo, idx) === -1) {
+      $scope.currentCombo.push(idx);
+      $scope.currentCombo = $scope.currentCombo.sort(util.sortNumber);
+    } else {
+      $scope.currentCombo = _.without($scope.currentCombo, idx);
+    }
+    $scope.checkForWin();
+    socket.emit('chat message', 'hello');
+
+
+  };
+  socket.on('chat message', function(msg) {
+    $('body').prepend($('<li>').text(msg));
+  });
 
 }];
