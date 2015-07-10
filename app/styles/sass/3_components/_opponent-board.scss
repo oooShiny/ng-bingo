@@ -1,0 +1,25 @@
+.opponent-boards{
+  margin-right: 0;
+}
+.opponent-board{
+  width:49%;
+  &:nth-child(odd) {
+    float:left;
+  }
+  &:nth-child(even) {
+    float:right;
+  }
+  &__tile{
+    background: linear-gradient(#f7f2f6, #b2ac9e);
+    border: 1px solid darken(#b2ac9e, 10%);
+    float:left;
+    height:36px;
+    width: 20%;
+    &--free{
+      background: linear-gradient(#f7f2f6, darken(#b2ac9e, 10%));
+    }
+    &--selected{
+      background: maroon;
+    }
+  }
+}

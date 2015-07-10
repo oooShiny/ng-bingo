@@ -9,21 +9,9 @@ var app = angular.module('Bingo', []);
 
 app.controller('MainController', require('./controllers/mainController.js'));
 app.directive('bingoTile', require('./directives/bingoTile.js'));
+app.directive('opponentBoard', require('./directives/opponentBoard.js'));
 
-var socket = io.connect();
-
-$('.sign-in').submit(function () {
-  var data = {
-    currentCombo: [],
-    id: util.generateGuid(),
-    playerName: $('.username').val() || 'anon'
-  };
-  socket.emit('playerJoined', data);
-  $('.main-board h1').text(data.playerName);
-  return false;
-});
-
-},{"./controllers/mainController.js":"/Users/jake.rainis/Development/ng-bingo/app/scripts/controllers/mainController.js","./directives/bingoTile.js":"/Users/jake.rainis/Development/ng-bingo/app/scripts/directives/bingoTile.js","./utils/":"/Users/jake.rainis/Development/ng-bingo/app/scripts/utils/index.js","angular":"/Users/jake.rainis/Development/ng-bingo/app/scripts/libs/angular.min.js","jquery":"/Users/jake.rainis/Development/ng-bingo/node_modules/jquery/dist/jquery.js"}],"/Users/jake.rainis/Development/ng-bingo/app/scripts/controllers/mainController.js":[function(require,module,exports){
+},{"./controllers/mainController.js":"/Users/jake.rainis/Development/ng-bingo/app/scripts/controllers/mainController.js","./directives/bingoTile.js":"/Users/jake.rainis/Development/ng-bingo/app/scripts/directives/bingoTile.js","./directives/opponentBoard.js":"/Users/jake.rainis/Development/ng-bingo/app/scripts/directives/opponentBoard.js","./utils/":"/Users/jake.rainis/Development/ng-bingo/app/scripts/utils/index.js","angular":"/Users/jake.rainis/Development/ng-bingo/app/scripts/libs/angular.min.js","jquery":"/Users/jake.rainis/Development/ng-bingo/node_modules/jquery/dist/jquery.js"}],"/Users/jake.rainis/Development/ng-bingo/app/scripts/controllers/mainController.js":[function(require,module,exports){
 'use strict';
 var $ = require('jquery');
 var _ = require('underscore');
@@ -33,13 +21,15 @@ var util = require('../utils/');
 
 module.exports = ['$scope', function ($scope) {
   $scope.currentCombo = [];
+  $scope.opponents = [];
+  $scope.myId = null;
   $scope.players = [];
   $scope.tiles = util.generateArray();
   $scope.checkForWin = function () {
     $.each(util.winningCombos, function (i, v) {
       var intersect = _.intersection(v, $scope.currentCombo);
       if (intersect.toString() === v.toString()) {
-        window.alert('winner!');
+        socket.emit('playerWon', $scope.myId);
       }
     });
   };
@@ -52,9 +42,49 @@ module.exports = ['$scope', function ($scope) {
       $scope.currentCombo = _.without($scope.currentCombo, idx);
     }
     $scope.checkForWin();
+    $scope.playerMoved();
+  };
+  $scope.playerMoved = function () {
+    var moveData = {
+      currentCombo: $scope.currentCombo,
+      id: $scope.myId
+    };
+    socket.emit('playerMoved', moveData);
+  };
+  $scope.updateOpponentBoards = function () {
+    if (!$scope.opponents.length) {
+      $scope.$apply(function () {
+        $scope.opponents = [];
+      });
+      return false;
+    }
+    $('.opponent-board__tiles').each(function (i, v) {
+      var playerObj = _.find($scope.opponents, function (item) {
+        return item.id === $(v).data('guid');
+      });
+      $.each(playerObj.currentCombo, function (i2, v2) {
+        $(v).find('.opponent-board__tile').eq(v2).addClass('opponent-board__tile--selected');
+      });
+    });
   };
   socket.on('playersUpdated', function (data) {
+    $scope.opponents = [];
     $scope.players = data;
+    $.each($scope.players, function (i, v) {
+      if (v.id !== $scope.myId) {
+        $scope.$apply(function () {
+          $scope.opponents.push(v);
+        });
+      }
+    });
+    $scope.updateOpponentBoards();
+  });
+  socket.on('playerWon', function (data) {
+    if (data.id === $scope.myId) {
+      window.alert('You win!');
+    } else {
+      window.alert(data.playerName + 'wins!');
+    }
   });
 
   $('.sign-in').submit(function () {
@@ -64,12 +94,14 @@ module.exports = ['$scope', function ($scope) {
       playerName: $('.username').val() || 'anon'
     };
     socket.emit('playerJoined', data);
-
     $scope.myId = data.id;
-
     $('.main-board h1').text(data.playerName);
     return false;
   });
+
+  window.onunload = function () {
+    socket.emit('playerQuit', $scope.myId);
+  };
 }];
 
 },{"../utils/":"/Users/jake.rainis/Development/ng-bingo/app/scripts/utils/index.js","jquery":"/Users/jake.rainis/Development/ng-bingo/node_modules/jquery/dist/jquery.js","underscore":"/Users/jake.rainis/Development/ng-bingo/node_modules/underscore/underscore.js"}],"/Users/jake.rainis/Development/ng-bingo/app/scripts/directives/bingoTile.js":[function(require,module,exports){
@@ -83,6 +115,26 @@ module.exports = function () {
       tile: '='
     },
     templateUrl: '/scripts/directives/bingoTile.html',
+    link: function link(scope, el, attrs) {
+      scope.selectTile = function (e) {
+        scope.$parent.handleClick(parseInt(attrs.index));
+        el.toggleClass('tile--selected');
+      };
+    }
+  };
+};
+
+},{"jquery":"/Users/jake.rainis/Development/ng-bingo/node_modules/jquery/dist/jquery.js"}],"/Users/jake.rainis/Development/ng-bingo/app/scripts/directives/opponentBoard.js":[function(require,module,exports){
+'use strict';
+
+var $ = require('jquery');
+module.exports = function () {
+  'use strict';
+  return {
+    scope: {
+      opponent: '='
+    },
+    templateUrl: '/scripts/directives/opponentBoard.html',
     link: function link(scope, el, attrs) {
       scope.selectTile = function (e) {
         //console.log(attrs.index);
@@ -114,6 +166,7 @@ var util = {
       var rand = Math.floor(Math.random() * util.fedWords.length);
       arr.push({
         word: util.fedWords[rand]
+        // word: rand
       });
     }
     arr[12] = {

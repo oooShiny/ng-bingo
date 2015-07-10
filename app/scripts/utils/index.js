@@ -7,6 +7,7 @@ var util = {
       let rand = Math.floor((Math.random() * util.fedWords.length));
       arr.push({
         word: util.fedWords[rand]
+          // word: rand
       });
     }
     arr[12] = {
