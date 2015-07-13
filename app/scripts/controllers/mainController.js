@@ -1,7 +1,6 @@
 'use strict';
 var $ = require('jquery');
 var _ = require('underscore');
-// var io = require('socket.io')();
 var socket = io.connect();
 var util = require('../utils/');
 
@@ -9,8 +8,11 @@ module.exports = ['$scope', function($scope) {
   $scope.currentCombo = [];
   $scope.opponents = [];
   $scope.myId = null;
+  $scope.myName = null;
   $scope.players = [];
   $scope.tiles = util.generateArray();
+  $scope.winner = null;
+
   $scope.checkForWin = function() {
     $.each(util.winningCombos, function(i, v) {
       var intersect = _.intersection(v, $scope.currentCombo);
@@ -30,6 +32,7 @@ module.exports = ['$scope', function($scope) {
     $scope.checkForWin();
     $scope.playerMoved();
   };
+
   $scope.playerMoved = function() {
     var moveData = {
       currentCombo: $scope.currentCombo,
@@ -37,6 +40,11 @@ module.exports = ['$scope', function($scope) {
     };
     socket.emit('playerMoved', moveData);
   };
+
+  $scope.restartGame = function() {
+    window.location.reload();
+  };
+
   $scope.updateOpponentBoards = function() {
     if (!$scope.opponents.length) {
       $scope.$apply(function() {
@@ -55,6 +63,19 @@ module.exports = ['$scope', function($scope) {
 
     });
   };
+
+  socket.on('consoleUpdate', function(data) {
+    var cssClass = data.id === $scope.myId ? 'me' : 'opponent';
+    var template = '';
+    if (data.playerName === 'admin') {
+      template = '<div class="admin">' + data.msg + '</div>';
+    } else {
+      template = '<div class="' + cssClass + '"><strong>' + data.playerName +
+        ':</strong> ' + data.msg + '</div>';
+    }
+    $('.console-output').append(template);
+  });
+
   socket.on('playersUpdated', function(data) {
     $scope.opponents = [];
     $scope.players = data;
@@ -67,15 +88,13 @@ module.exports = ['$scope', function($scope) {
     });
     $scope.updateOpponentBoards();
   });
+
   socket.on('playerWon', function(data) {
-    if (data.id === $scope.myId) {
-      window.alert('You win!');
-    } else {
-      window.alert(data.playerName + 'wins!');
-    }
+    $scope.winner = data.playerName;
+    util.modalShow('modal__game-over');
   });
 
-  $('.sign-in').submit(function() {
+  $('.sign-in-form').submit(function() {
     var data = {
       currentCombo: [],
       id: util.generateGuid(),
@@ -83,11 +102,25 @@ module.exports = ['$scope', function($scope) {
     };
     socket.emit('playerJoined', data);
     $scope.myId = data.id;
+    $scope.myName = data.playerName;
     $('.main-board h1').text(data.playerName);
+    util.modalHide('modal__sign-in');
+    return false;
+  });
+
+  $('.console-form').submit(function() {
+    socket.emit('playerChatted', {
+      id: $scope.myId,
+      msg: $('.console-form__message').val(),
+      playerName: $scope.myName
+    });
     return false;
   });
 
   window.onunload = function() {
-    socket.emit('playerQuit', $scope.myId);
+    socket.emit('playerQuit', {
+      id: $scope.myId,
+      playerName: $scope.myName
+    });
   };
 }];

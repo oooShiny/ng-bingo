@@ -1,42 +1,66 @@
 //= include includes/1_core/head.html
 
-<body ng-app="Bingo">
+<body ng-app="Bingo" class="modal-open">
 
-  //= include includes/4_regions/header.html
+  <div ng-controller="MainController">
+    <section class="outer-wrapper">
+      <section class="inner-wrapper">
 
-
-  <section class="outer-wrapper">
-    <section class="inner-wrapper">
-
+      </section>
     </section>
-  </section>
 
-  <section class="outer-wrapper">
-    <section class="inner-wrapper" ng-controller="MainController">
+    <section class="outer-wrapper game-wrapper">
+      <section class="inner-wrapper">
+        <div class="row">
+          <div class="main-board span-8">
+            <h1>Front End Supremacy</h1>
+            <div class="row">
+              <div ng-repeat="tile in tiles">
+                <bingo-tile class="tile" data-index="{{$index}}" tile="tile"></bingo-tile>
+              </div>
+            </div>
+
+          </div>
+          <div class="opponent-boards span-4">
+            <h2>Opponents:</h2>
+            <div class="row">
+              <div class="opponent-board" ng-repeat="opponent in opponents">
+                <opponent-board opponent="opponent"></opponent-board>
+              </div>
+            </div>
+            <div class="row console">
+              <h2>Activity:</h2>
+              <div class="console-ouput"></div>
+              <form class="console-form">
+                <input type="text" class="console-form__message">
+                <input type="submit" value="Post">
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <div class="overlay"></div>
+    <div class="modal modal__sign-in">
       <h1>Sign In</h1>
-      <form class="sign-in">
+      <form class="sign-in-form">
         <input class="username" type="text" maxlength="10" placeholder="username">
         <input type="submit" value="Join">
       </form>
+    </div>
+    <div class="modal modal__game-over">
+      <h1>{{winner}} wins!</h1>
+      <img src="/images/irish.jpg" alt="">
+      <p>I thought you were a thought-leader...?</p>
+      <button class="restart" ng-click="restartGame()">Start Over</button>
+    </div>
 
-      <div class="row">
-        <div class="main-board span-8">
-        <h1>Front End Supremacy</h1>
-          <div ng-repeat="tile in tiles">
-            <bingo-tile class="tile" data-index="{{$index}}" tile="tile"></bingo-tile>
-          </div>
-        </div>
-        <div class="opponent-boards span-4">
-          <h2>Opponents</h2>
-            <div class="opponent-board" ng-repeat="opponent in opponents">
-              <opponent-board opponent="opponent"></opponent-board>
-          </div>
-        </div>
-      </div>
-    </section>
-  </section>
+  </div>
 
-  //= include includes/4_regions/footer.html
+  <!-- Global script includes -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/scripts/app.js"></script>
 
 </body>
 

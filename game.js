@@ -7,6 +7,7 @@ exports.init = function(sio, socket) {
   io = sio;
   game = socket;
 
+  game.on('playerChatted', IO.playerChatted);
   game.on('playerJoined', IO.playerJoined);
   game.on('playerMoved', IO.playerMoved);
   game.on('playerQuit', IO.playerQuit);
@@ -18,9 +19,18 @@ exports.init = function(sio, socket) {
 
 var IO = {
   currentPlayers: [],
+  playerChatted: function(data) {
+    IO.updateConsole(data);
+  },
   playerJoined: function(data) {
     IO.currentPlayers.push(data);
     IO.playersUpdated();
+
+    IO.updateConsole({
+      id: 0,
+      msg: data.playerName + ' has joined the game.',
+      playerName: 'admin'
+    });
   },
   playerMoved: function(data) {
     _.each(IO.currentPlayers, function(v, i) {
@@ -32,17 +42,22 @@ var IO = {
   },
   playerQuit: function(data) {
     _.each(IO.currentPlayers, function(v, i) {
-      if (v.id === data) {
+      if (v.id === data.id) {
         IO.currentPlayers.splice(i, 1);
       }
     });
     IO.playersUpdated();
+    IO.updateConsole({
+      id: 0,
+      msg: data.playerName +
+        ' has left the game. They weren\'t that good anyway.',
+      playerName: 'admin'
+    });
   },
   playersUpdated: function() {
     io.emit('playersUpdated', IO.currentPlayers);
   },
   playerWon: function(data) {
-    console.log(data);
     _.each(IO.currentPlayers, function(v, i) {
       if (v.id === data) {
         io.emit('playerWon', {
@@ -51,5 +66,8 @@ var IO = {
         });
       }
     });
+  },
+  updateConsole: function(data) {
+    io.emit('consoleUpdate', data);
   }
 };

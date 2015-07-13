@@ -4,10 +4,12 @@
 .opponent-board{
   width:49%;
   &:nth-child(odd) {
-    float:left;
+    float:right;
+    margin-right: 0%;
   }
   &:nth-child(even) {
-    float:right;
+    float:left;
+    margin-right: 2%;
   }
   &__tile{
     background: linear-gradient(#f7f2f6, #b2ac9e);

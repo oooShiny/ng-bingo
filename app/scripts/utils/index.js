@@ -1,4 +1,5 @@
 'use strict';
+var $ = require('jquery');
 var util = {
   fedWords: require('./wordlist.js'),
   generateArray: function() {
@@ -23,6 +24,16 @@ var util = {
     }
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
       s4() + '-' + s4() + s4() + s4();
+  },
+  modalHide: function(cssClass) {
+    $('.overlay').fadeOut();
+    $('.' + cssClass).fadeOut();
+    $('body').removeClass('modal-open');
+  },
+  modalShow: function(cssClass) {
+    $('.overlay').fadeIn();
+    $('.' + cssClass).fadeIn();
+    $('body').addClass('modal-open');
   },
   sortNumber: function(a, b) {
     return a - b;
