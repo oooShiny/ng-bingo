@@ -103,7 +103,6 @@ module.exports = ['$scope', function($scope) {
     socket.emit('playerJoined', data);
     $scope.myId = data.id;
     $scope.myName = data.playerName;
-    $('.main-board h1').text(data.playerName);
     util.modalHide('modal__sign-in');
     return false;
   });

@@ -1,0 +1,39 @@
+.console{
+  margin-top: 36px;
+  hr{
+    border: none;
+    border-top: 1px solid #ccc;
+  }
+  &-output{
+    background-color: #ccc;
+    border: 1px solid #aaa;
+    height: 200px;
+    margin-bottom: 12px;
+    overflow: scroll;
+    padding: 12px;
+  }
+  &>div{
+    margin-bottom: 3px;
+  }
+  .admin{
+    font-style: italic;
+    color: #666;
+  }
+  .me{
+    color:darkgreen;
+  }
+  .opponent{
+    color:#333;
+  }
+  &-form{
+    overflow: hidden;
+    [type="text"]{
+      float: left;
+      width: 80%;
+    }
+    [type="submit"]{
+      float: right;
+      width: 18%;
+    }
+  }
+}
