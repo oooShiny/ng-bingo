@@ -1,8 +1,10 @@
 .main-board{
   @include span(8 of 12);
-  //@include push(3.5);
+  @include breakpoint(max-width $tablet){
+    @include span(12 of 12);
+  }
   h1{
-    font-size: 36px;
-    margin-bottom: 64px;
+    color:#f0aa3a;
+    opacity:0;
   }
 }

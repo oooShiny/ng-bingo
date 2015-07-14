@@ -104,6 +104,7 @@ module.exports = ['$scope', function($scope) {
     $scope.myId = data.id;
     $scope.myName = data.playerName;
     util.modalHide('modal__sign-in');
+    $('.main-board h1').fadeTo(1000, 1);
     return false;
   });
 

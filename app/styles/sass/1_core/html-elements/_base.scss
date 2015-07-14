@@ -8,10 +8,13 @@ html {
   height: 100%;
 }
 body {
+  color:#fff;
   font-family: $sansBook;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   @include font-size(16,24);
+  @include filter-gradient(#405570, #293949, vertical);
+  @include background-image(linear-gradient(top, #405570 0%,#293949 100%));
 }
 h1,
 h2,
@@ -50,7 +53,7 @@ a {
   }
 }
 em {
-  font-family: $sansItalic;
+  // font-family: $sansItalic;
   font-style: normal;
 }
 strong {

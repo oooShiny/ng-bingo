@@ -1,12 +1,16 @@
 .console{
   margin-top: 36px;
+  h2{
+    margin-bottom: 18px;
+  }
   hr{
     border: none;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid #a0b1c5;;
   }
   &-output{
-    background-color: #ccc;
-    border: 1px solid #aaa;
+    background-color: #212830;
+    border: 1px solid #a0b1c5;
+    font-size:10px;
     height: 200px;
     margin-bottom: 12px;
     overflow: scroll;
@@ -17,7 +21,7 @@
   }
   .admin{
     font-style: italic;
-    color: #666;
+    color: #999;
   }
   .me{
     color:darkgreen;

@@ -1,5 +1,10 @@
 .opponent-boards{
   margin-right: 0;
+  &>h2{
+    color:#f0aa3a;
+    margin-top: 24px;
+    margin-bottom: 0;
+  }
 }
 .opponent-board{
   width:49%;
@@ -12,16 +17,16 @@
     margin-right: 2%;
   }
   &__tile{
-    background: linear-gradient(#f7f2f6, #b2ac9e);
-    border: 1px solid darken(#b2ac9e, 10%);
+    background: #758795;
+    border: 1px solid #405570;
     float:left;
     height:36px;
     width: 20%;
     &--free{
-      background: linear-gradient(#f7f2f6, darken(#b2ac9e, 10%));
+      background: darken(#758795, 5%);
     }
     &--selected{
-      background: maroon;
+      background: #56e7ca;
     }
   }
 }
