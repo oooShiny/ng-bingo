@@ -10,8 +10,10 @@ module.exports = ['$scope', function($scope) {
   $scope.myId = null;
   $scope.myName = null;
   $scope.players = [];
-  $scope.tiles = util.generateArray();
+  $scope.tiles = util.generateArray(util.fedWords);
   $scope.winner = null;
+  $scope.winningImage = util.randomizer(util.winningImages);
+  $scope.winningPhrase = util.randomizer(util.winningPhrases);
 
   $scope.checkForWin = function() {
     $.each(util.winningCombos, function(i, v) {
@@ -73,6 +75,14 @@ module.exports = ['$scope', function($scope) {
       template = '<div class="' + cssClass + '"><strong>' + data.playerName +
         ':</strong> ' + data.msg + '</div>';
     }
+    $('.console-output').append(template);
+  });
+
+  socket.on('paulChatted', function(data) {
+    console.log('paulchatted');
+    var template = '<div class="paul"><strong>Paul:</strong> ' + util.randomizer(
+      util.paulPhrases); + '</div>';
+
     $('.console-output').append(template);
   });
 

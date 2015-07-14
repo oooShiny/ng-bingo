@@ -81,8 +81,8 @@
     </div>
     <div class="modal modal__game-over">
       <h1>{{winner}} wins!</h1>
-      <img src="/images/irish.jpg" alt="">
-      <p>Wow! What a thought-leader!</p>
+      <img ng-src="{{winningImage}}" alt="">
+      <p>{{winningPhrase}}</p>
       <button class="restart" ng-click="restartGame()">Start Over</button>
     </div>
 

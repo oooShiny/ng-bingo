@@ -19,8 +19,15 @@ exports.init = function(sio, socket) {
 
 var IO = {
   currentPlayers: [],
+  paulBot: function(data) {
+    if (data.msg.indexOf('paul') > -1 || data.msg.indexOf('Paul') > -1 ||
+      data.msg.indexOf('PAUL') > -1) {
+      io.emit('paulChatted', null);
+    }
+  },
   playerChatted: function(data) {
     IO.updateConsole(data);
+    IO.paulBot(data);
   },
   playerJoined: function(data) {
     IO.currentPlayers.push(data);

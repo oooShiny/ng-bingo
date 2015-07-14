@@ -4,7 +4,6 @@
   @include box-shadow(2px 2px 8px rgba(0,0,0,.4));
   left: 50%;
   margin-left: -150px;
-  margin-top: -80px;
   padding: 0 12px 24px;
   position: absolute;
   text-align: center;
@@ -24,6 +23,15 @@
 }
 .modal__game-over {
   display: none;
+  h1{
+    text-transform: uppercase;
+  }
+  p{
+    font-size: 12px;
+  }
+}
+.modal__sign-in {
+  margin-top: -69px;
 }
 .overlay {
   background: rgba(61,83,107,.6);
