@@ -61,7 +61,7 @@ $susy: (
   display: block;
 }
 @mixin grid($num) {
-  @include breakpoint($mobile) {
+  @include breakpoint(0px) {
     @include span(12 of 12);
     &.center {
       @include push(0);

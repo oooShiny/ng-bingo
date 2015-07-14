@@ -1,9 +1,19 @@
 .opponent-boards{
   margin-right: 0;
+  @include breakpoint(max-width $tablet){
+    margin-top: 24px;
+  }
   &>h2{
     color:#f0aa3a;
     margin-top: 24px;
     margin-bottom: 0;
+    text-shadow: 1px 1px 3px rgba(0,0,0,.5);
+  }
+  &>hr{
+    display: block;
+    @include breakpoint($tablet){
+      display: none;
+    }
   }
 }
 .opponent-board{
@@ -22,6 +32,9 @@
     float:left;
     height:36px;
     width: 20%;
+    @include breakpoint(max-width $desktop){
+      height: 24px;
+    }
     &--free{
       background: darken(#758795, 5%);
     }

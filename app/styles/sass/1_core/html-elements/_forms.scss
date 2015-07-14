@@ -12,11 +12,27 @@ input[type="radio"],
 input[type="checkbox"] {
   width: auto;
 }
+button,
 input[type="submit"] {
-
+  background-color: #283546;
+  // border: none;
+  border:1px solid #95a8b9;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  font-weight: bold;
+  height: 38px;
+  outline: none;
+  vertical-align: middle;
 }
 input[type="text"] {
-
+  background-color: #67788c;
+  // border:none;
+  border: 1px solid #95a8b9;
+  color:#fff;
+  font-size: 12px;
+  outline:none;
+  padding: 6px;
 }
 input[type="password"] {
 

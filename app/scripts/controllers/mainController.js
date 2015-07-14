@@ -114,6 +114,7 @@ module.exports = ['$scope', function($scope) {
       msg: $('.console-form__message').val(),
       playerName: $scope.myName
     });
+    $('.console-form__message').val('');
     return false;
   });
 

@@ -4,13 +4,19 @@
   -webkit-tap-highlight-color: rgba(0,0,0,0); // Remove default tappable touch color in iOS
 }
 html {
+  background-color: #293949;
   font-size: 62.5%; // Sets up the Base 10 stuff
   height: 100%;
+
 }
 body {
+  background-color: #293949;
   color:#fff;
   font-family: $sansBook;
+  height: 100%;
   overflow-x: hidden;
+  padding-top: 1px;
+  position: relative;
   -webkit-font-smoothing: antialiased;
   @include font-size(16,24);
   @include filter-gradient(#405570, #293949, vertical);
@@ -72,4 +78,8 @@ blockquote {
 }
 cite {
 
+}
+hr{
+  border: none;
+  border-top: 1px solid darken(#758795, 15%);
 }
