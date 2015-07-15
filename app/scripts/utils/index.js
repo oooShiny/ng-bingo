@@ -52,6 +52,12 @@ var util = {
   sortNumber: function(a, b) {
     return a - b;
   },
+  updateConsole: function(template) {
+    $('.console-output').append(template);
+    $('.console-output').animate({
+      scrollTop: $('.console-output')[0].scrollHeight
+    }, 1000);
+  },
   winningCombos: require('./winning-combos.js'),
   winningImages: require('./winning-images.js'),
   winningPhrases: require('./winning-phrases.js')

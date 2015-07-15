@@ -75,15 +75,14 @@ module.exports = ['$scope', function($scope) {
       template = '<div class="' + cssClass + '"><strong>' + data.playerName +
         ':</strong> ' + data.msg + '</div>';
     }
-    $('.console-output').append(template);
+    util.updateConsole(template);
   });
 
   socket.on('paulChatted', function(data) {
-    console.log('paulchatted');
     var template = '<div class="paul"><strong>Paul:</strong> ' + util.randomizer(
-      util.paulPhrases); + '</div>';
+      util.paulPhrases) + '</div>';
 
-    $('.console-output').append(template);
+    util.updateConsole(template);
   });
 
   socket.on('playersUpdated', function(data) {
